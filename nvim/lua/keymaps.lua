@@ -78,6 +78,7 @@ function M.setup()
 
   -- clears highlighted words when pressing esc (i.e from find)
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+  vim.keymap.set('n', '<C-c>', '<cmd>nohlsearch<CR>')
 
   -- diagnostics
   vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -85,11 +86,28 @@ function M.setup()
   -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
   vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-  --  See `:help wincmd` for a list of all window commands
-  vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-  vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-  vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-  vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+  -- navigate seemlessly between tmux and nvim panes
+  local function tmux_or_nvim(direction)
+    local current = vim.fn.winnr()
+    vim.cmd('wincmd ' .. direction)
+
+    -- If we didn't move, we're at the edge → go to tmux
+    if current == vim.fn.winnr() then
+      local tmux_dir = ({
+        h = 'L',
+        j = 'D',
+        k = 'U',
+        l = 'R',
+      })[direction]
+
+      vim.fn.system('tmux select-pane -' .. tmux_dir)
+    end
+  end
+
+  vim.keymap.set('n', '<C-h>', function() tmux_or_nvim 'h' end)
+  vim.keymap.set('n', '<C-j>', function() tmux_or_nvim 'j' end)
+  vim.keymap.set('n', '<C-k>', function() tmux_or_nvim 'k' end)
+  vim.keymap.set('n', '<C-l>', function() tmux_or_nvim 'l' end)
 
   -- Clear active snippet when leaving insert mode, fixes blink.cmp issue
   vim.api.nvim_create_autocmd('InsertLeave', {
