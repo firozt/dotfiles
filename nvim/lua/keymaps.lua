@@ -2,6 +2,10 @@
 local M = {}
 
 function M.setup()
+  -- tmux panes
+  vim.keymap.set('n', '<leader>tv', function() vim.fn.system 'tmux split-window -h' end, { desc = 'New [T]mux pane (horizontal split)' })
+  vim.keymap.set('n', '<leader>th', function() vim.fn.system 'tmux split-window -v' end, { desc = 'New tmux pane (vertical split)' })
+
   -- line wrap for .md files
   vim.api.nvim_create_autocmd('FileType', {
     pattern = 'markdown',

@@ -5,7 +5,7 @@ return {
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
     -- Useful status updates for LSP.
-    { 'j-hui/fidget.nvim',    opts = {} },
+    { 'j-hui/fidget.nvim', opts = {} },
 
     -- Allows extra capabilities provided by blink.cmp
     'saghen/blink.cmp',
@@ -48,9 +48,7 @@ return {
         end
 
         if client and client:supports_method('textDocument/inlayHint', event.buf) then
-          map('<leader>th',
-            function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end,
-            '[T]oggle Inlay [H]ints')
+          map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
         end
       end,
     })
@@ -59,8 +57,8 @@ return {
 
     local servers = {
       dockerls = {},
-      html = {},   -- vscode-html-language-server
-      cssls = {},  -- vscode-css-language-server
+      html = {}, -- vscode-html-language-server
+      cssls = {}, -- vscode-css-language-server
       jsonls = {}, -- vscode-json-language-server
       eslint = {}, -- vscode-eslint-language-server
       clangd = {},
@@ -70,11 +68,11 @@ return {
             semanticTokens = true, -- keep your semantic tokens
             analyses = {
               unusedparams = true, -- warns about unused function parameters
-              nilness = true,      -- warns about possible nil dereferences
-              unusedwrite = true,  -- warns about values written but never read
-              shadow = true,       -- variable shadowing
+              nilness = true, -- warns about possible nil dereferences
+              unusedwrite = true, -- warns about values written but never read
+              shadow = true, -- variable shadowing
             },
-            staticcheck = true,    -- enables many linter-like warnings
+            staticcheck = true, -- enables many linter-like warnings
           },
         },
       },
