@@ -25,7 +25,8 @@ return {
       }
 
       -- Keymap to open Oil manually
-      vim.keymap.set('n', '<leader>o', ':Oil .<CR>', { noremap = true, silent = true })
+      vim.keymap.set('n', '<leader>O', ':Oil .<CR>', { noremap = true, silent = true }, { desc = 'Open [O]il From Project Root' })
+      vim.keymap.set('n', '<leader>o', function() require('oil').open(vim.fn.expand '%:p:h') end, { desc = 'Open [O]il in current file directory' })
     end,
   },
 }

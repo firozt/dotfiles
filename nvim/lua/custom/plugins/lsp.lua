@@ -60,7 +60,16 @@ return {
       html = {}, -- vscode-html-language-server
       cssls = {}, -- vscode-css-language-server
       jsonls = {}, -- vscode-json-language-server
-      eslint = {}, -- vscode-eslint-language-server
+      eslint = {
+        cmd = {
+          'node',
+          'node_modules/eslint/bin/eslint.js',
+          '--stdio',
+        },
+        settings = {
+          workingDirectory = { mode = 'auto' },
+        },
+      },
       clangd = {},
       gopls = {
         settings = {
