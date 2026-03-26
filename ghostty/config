@@ -1,7 +1,7 @@
 # Dynamic theme colors
+theme = gruvbox-material-hard-dark
 config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
 
-theme = gruvbox-material-hard-dark
 window-decoration = none
 
 keybind = global:cmd+§=toggle_quick_terminal
