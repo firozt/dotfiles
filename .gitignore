@@ -8,5 +8,7 @@
 !nvim/**
 !iterm2/
 !iterm2/**
+!ghostty/**
+!ghostty/
 
 !.gitignore
