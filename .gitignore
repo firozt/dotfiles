@@ -11,4 +11,6 @@
 !ghostty/**
 !ghostty/
 
+!.zshrc
+
 !.gitignore
