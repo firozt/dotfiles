@@ -16,11 +16,6 @@ return {
   },
   config = function()
     require('telescope').setup {
-
-      defaults = {
-        find_command = { 'rg', '--files', '--hidden', '--glob', '!.git/*' },
-      },
-
       pickers = {
         colorscheme = {
           enable_preview = true,
