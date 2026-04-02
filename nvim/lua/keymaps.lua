@@ -126,6 +126,15 @@ function M.setup()
     end,
     { desc = '[S]earch Workspace [W]arnings' }
   )
+
+  vim.keymap.set('n', '<leader>te', function()
+    local clients = vim.lsp.get_active_clients { name = 'eslint' }
+    if #clients > 0 then
+      vim.cmd 'LspStop eslint'
+    else
+      vim.cmd 'LspStart eslint'
+    end
+  end, { desc = 'Toggle ESLint' })
 end
 
 return M
