@@ -18,8 +18,8 @@ confirm-close-surface=false
 resize-overlay = never
 gtk-toolbar-style = flat
 background-opacity = 0.9
-background-blur = true
-background-blur-radius = 25
+# background-blur = true
+# background-blur-radius = 25
 
 # Cursor styling
 cursor-style = block
@@ -53,6 +53,7 @@ mouse-scroll-multiplier = 0.95
 # custom-shader = shaders/cursor_smear_fade_original.glsl
 # custom-shader = shaders/cursor_smear_gradient.glsl
 # custom-shader = shaders/cursor_smear_gradient_original.glsl
+
 custom-shader = shaders/cursor_smear_original.glsl
 # custom-shader = shaders/cursor_smear_rainbow.glsl
 # custom-shader = shaders/cursor_smear_rainbow_original.glsl

@@ -60,16 +60,7 @@ return {
       html = {}, -- vscode-html-language-server
       cssls = {}, -- vscode-css-language-server
       jsonls = {}, -- vscode-json-language-server
-      eslint = {
-        cmd = {
-          'node',
-          'node_modules/eslint/bin/eslint.js',
-          '--stdio',
-        },
-        settings = {
-          workingDirectory = { mode = 'auto' },
-        },
-      },
+      eslint = {}, -- vscode-eslint-language-server
       clangd = {},
       gopls = {
         settings = {
@@ -125,20 +116,6 @@ return {
         },
       },
       jdtls = {},
-      yamlls = {
-        settings = {
-          yaml = {
-            validate = true,
-            completion = true,
-            hover = true,
-            schemas = {
-              -- ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
-              -- kubernetes = "/*.yaml",
-            },
-            format = { enable = true },
-          },
-        },
-      },
     }
 
     local ensure_installed = {
@@ -151,7 +128,6 @@ return {
       'clangd',
       'html-lsp',
       'dockerfile-language-server',
-      'yaml-language-server',
 
       -- Formatters
       'stylua',
