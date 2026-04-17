@@ -1,108 +1,98 @@
--- OPTIONS --
-
-
+------------------- OPTIONS -------------------
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
 vim.g.have_nerd_font = true
-
 vim.o.number = true
 vim.o.relativenumber = true
-
 vim.o.mouse = 'a'
-
 vim.o.showmode = false
-
--- Sync clipboard between OS and Neovim.
---  Schedule the setting after `UiEnter` because it can increase startup-time.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
-
-
--- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true
-
--- Keep signcolumn on by default
 vim.o.signcolumn = 'yes'
-
--- Decrease update time
 vim.o.updatetime = 250
-
--- Decrease mapped sequence wait time
 vim.o.timeoutlen = 500
-
-
 vim.o.list = true
 -- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.listchars = { tab = '│ ', trail = '·', nbsp = '␣' }
-
 vim.opt.wrap = false
 vim.o.inccommand = 'split'
 vim.o.scrolloff = 10
 vim.o.confirm = true
 
--- remove bg
-vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
-
-
--- yank
 vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
-    if vim.hl then
-      vim.hl.on_yank()
-    else
-      vim.highlight.on_yank()
-    end
-  end,
+    vim.highlight.on_yank({ timeout = 100, })
+    end,
 })
 
 -- errors inline
 vim.diagnostic.config {
-  update_in_insert = true,
-  severity_sort = true,
-  underline = { severity = vim.diagnostic.severity.ERROR },
-  virtual_text = true,
-
-  jump = { float = true },
+	update_in_insert = true,
+	severity_sort = true,
+	virtual_text = true,
+	jump = { float = true },
 }
-
 
 vim.pack.add {
-	{ src = 'https://github.com/ThePrimeagen/harpoon', branch= 'harpoon2' },
-	{ src = 'https://github.com/stevearc/oil.nvim' },
-	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter'},
+	-- dependencies --
+	'https://github.com/nvim-lua/plenary.nvim',
+	-- plugins --
+	'https://github.com/lewis6991/gitsigns.nvim',
+	'https://github.com/nvim-mini/mini.statusline',
+	'https://github.com/ellisonleao/gruvbox.nvim',
+	'https://github.com/stevearc/oil.nvim',
+	'https://github.com/windwp/nvim-autopairs',
+	'https://github.com/christoomey/vim-tmux-navigator',
+	'https://github.com/nvim-telescope/telescope.nvim',
+	'https://github.com/windwp/nvim-ts-autotag',
+	{ src = 'https://github.com/theprimeagen/harpoon', branch='harpoon2' },
 	-- LSP --
-	{ src = 'https://github.com/saghen/blink.cmp', version = 'v1.*' },
-	{ src = 'https://github.com/neovim/nvim-lspconfig' },
-	{ src = 'https://github.com/mason-org/mason.nvim' },
-	{ src = 'https://github.com/mason-org/mason-lspconfig.nvim' },
-	{ src = 'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim' },
+	{ src = 'https://github.com/saghen/blink.cmp', branch = 'v1' },
+	'https://github.com/nvim-treesitter/nvim-treesitter',
+	-- 'https://github.com/mason-org/mason.nvim',
+	'https://github.com/neovim/nvim-lspconfig'
 }
 
-require('blink.cmp').setup({
-  signature = { enabled = true },
-  keymap = { preset = 'super-tab' },
-})
+-- colorscheme
+vim.cmd.colorscheme("gruvbox")
 
-require('mason').setup()
-
-vim.lsp.config('lua_ls', {
-  settings = {
-    Lua = {
-      diagnostics = { globals = { 'vim' } },
-      workspace = { library = vim.api.nvim_get_runtime_file("", true) },
-    },
+require('mini.statusline').setup()
+require('oil').setup()
+require('nvim-autopairs').setup()
+require('telescope').setup()
+require('nvim-ts-autotag').setup()
+require("nvim-treesitter.install").update("all")
+require('nvim-treesitter.config').setup({
+  ensure_installed = {
+    "lua",
+    "javascript",
+    "typescript",
+    "cpp",
+    "c",
+    "json",
+    "html",
+    "css",
+    "bash",
+    "go",
+    "gomod",
+    "gowork",
+  },
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = true,
   },
 })
 
-vim.lsp.enable({ 'lua_ls', 'gopls' })
-
-require('oil').setup()
+require('blink.cmp').setup({
+	fuzzy = { implementation = 'lua' },
+	signature = { enabled = true },
+	keymap = { preset = 'super-tab' },
+})
 
 -- Open oil when nvim is opened with a directory
 vim.api.nvim_create_autocmd('VimEnter', {
@@ -116,18 +106,82 @@ vim.api.nvim_create_autocmd('VimEnter', {
 vim.keymap.set('n', '<leader>o', '<cmd>Oil<cr>')
 vim.keymap.set('n', '<leader>a', '<C-^>')
 
+vim.keymap.set('n', '<C-h>', '<C-w>h')
+vim.keymap.set('n', '<C-j>', '<C-w>j')
+vim.keymap.set('n', '<C-k>', '<C-w>k')
+vim.keymap.set('n', '<C-l>', '<C-w>l')
 
--- local harpoon = require("harpoon")
-require( 
+vim.keymap.set('n', '<leader><C-r>', '<cmd>restart<cr>')
 
--- vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
--- vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
---
--- vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
--- vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
--- vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
--- vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
---
--- -- Toggle previous & next buffers stored within Harpoon list
--- vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
--- vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+
+-- telescope -- 
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Find files' })
+vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Live grep' })
+vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Buffers' })
+vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
+
+
+-- bg transparent
+vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+
+
+local lsp_servers = {
+  lua_ls = {
+    Lua = { workspace = { library = vim.api.nvim_get_runtime_file("lua", true) }, },
+  },
+  clangd = {},
+  rust_analyzer = {},
+  pyright = {},
+}
+
+vim.pack.add({
+  "https://github.com/neovim/nvim-lspconfig", -- default configs for lsps
+  "https://github.com/mason-org/mason.nvim",                     -- package manager
+  "https://github.com/mason-org/mason-lspconfig.nvim",           -- lspconfig bridge
+  "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" -- auto installer
+})
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+require("mason-tool-installer").setup({
+  ensure_installed = vim.tbl_keys(lsp_servers),
+})
+
+-- configure each lsp server on the table
+-- to check what clients are attached to the current buffer, use
+-- `:checkhealth vim.lsp`. to view default lsp keybindings, use `:h lsp-defaults`.
+for server, config in pairs(lsp_servers) do
+  vim.lsp.config(server, {
+    settings = config,
+    -- only create the keymaps if the server attaches successfully
+    on_attach = function(_, bufnr)
+      vim.keymap.set("n", "grd", vim.lsp.buf.definition,
+        { buffer = bufnr, desc = "vim.lsp.buf.definition()", })
+      vim.keymap.set("n", "grf", vim.lsp.buf.format,
+        { buffer = bufnr, desc = "vim.lsp.buf.format()", })
+    end,
+  })
+end
+
+local lspconfig = require('lspconfig')
+
+lspconfig.gopls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+      },
+      staticcheck = true,
+    },
+    settings = {
+	    gopls = {
+		    semanticTokens = false,
+	    },
+    },
+  },
+}
