@@ -87,7 +87,7 @@ require("lualine").setup({
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
-vim.keymap.set("n", "leaderfa", mark.add_file)
+vim.keymap.set("n", "<leader>fa", mark.add_file)
 vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
 
 vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end)
