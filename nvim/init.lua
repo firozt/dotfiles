@@ -63,7 +63,7 @@ vim.cmd('packadd nvim.difftool')
 vim.cmd('packadd nvim.undotree')
 
 
-vim.pack.add {
+vim.pack.add({
 	-- dependencies --
 	'https://github.com/nvim-lua/plenary.nvim',
     'https://github.com/nvim-tree/nvim-web-devicons',
@@ -86,7 +86,7 @@ vim.pack.add {
     "https://github.com/mason-org/mason.nvim",
     "https://github.com/mason-org/mason-lspconfig.nvim",
     "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim"
-}
+})
 
 -----------------------------------------------------------------------------------------
 ---                                PLUGIN SETUP                                       ---
