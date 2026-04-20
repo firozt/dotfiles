@@ -1,4 +1,6 @@
-------------------- OPTIONS -------------------
+-----------------------------------------------------------------------------------------
+---                                   OPTIONS                                         ---
+-----------------------------------------------------------------------------------------
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
@@ -19,15 +21,11 @@ vim.opt.wrap = false
 vim.o.inccommand = 'split'
 vim.o.scrolloff = 10
 vim.o.confirm = true
-
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank({ timeout = 100, })
-    end,
-})
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
+
+
 
 -- errors inline
 vim.diagnostic.config {
@@ -37,15 +35,40 @@ vim.diagnostic.config {
 	jump = { float = true },
 }
 
+-- remove default syntax highlight, only use treestierr
 vim.cmd('syntax off')
 
----------------- PLUGIN SETUPS -----------------
+-----------------------------------------------------------------------------------------
+---                                 AUTO CMD'S                                        ---
+-----------------------------------------------------------------------------------------
+
+-- yank highlight
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank({ timeout = 100, })
+    end,
+})
+
+-- attatch treesitter
+vim.api.nvim_create_autocmd('FileType', {
+    callback = function() pcall(vim.treesitter.start) end,
+})
+
+-----------------------------------------------------------------------------------------
+---                               PLUGIN INSTALL                                      ---
+-----------------------------------------------------------------------------------------
+
+-- from base nvim
+vim.cmd('packadd nvim.difftool')
+vim.cmd('packadd nvim.undotree')
+
 
 vim.pack.add {
 	-- dependencies --
 	'https://github.com/nvim-lua/plenary.nvim',
-	-- plugins --
-	'https://github.com/lewis6991/gitsigns.nvim',
+    'https://github.com/nvim-tree/nvim-web-devicons',
+    'https://github.com/lewis6991/gitsigns.nvim',
+    -- plugins --
 	'https://github.com/ellisonleao/gruvbox.nvim',
 	'https://github.com/stevearc/oil.nvim',
 	'https://github.com/windwp/nvim-autopairs',
@@ -53,14 +76,26 @@ vim.pack.add {
 	'https://github.com/nvim-telescope/telescope.nvim',
 	'https://github.com/windwp/nvim-ts-autotag',
     'https://github.com/tpope/vim-surround',
+    'https://github.com/nvim-mini/mini.ai',
 	{ src = 'https://github.com/theprimeagen/harpoon', branch='harpoon2' },
-	-- LSP --
+	-- LSP + Auto-complete --
 	{ src = 'https://github.com/saghen/blink.cmp', branch = 'v1' },
 	'https://github.com/neovim/nvim-lspconfig',
 	'https://github.com/nvim-treesitter/nvim-treesitter',
-    'https://github.com/nvim-treesitter/nvim-treesitter',
     'https://github.com/nvim-lualine/lualine.nvim',
+    "https://github.com/mason-org/mason.nvim",
+    "https://github.com/mason-org/mason-lspconfig.nvim",
+    "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim"
 }
+
+-----------------------------------------------------------------------------------------
+---                                PLUGIN SETUP                                       ---
+-----------------------------------------------------------------------------------------
+
+-- theme
+vim.cmd.colorscheme("gruvbox")
+
+require('mini.ai').setup()
 
 require("lualine").setup({
   options = {
@@ -84,6 +119,34 @@ require("lualine").setup({
   },
 })
 
+require('oil').setup({
+  default_file_explorer = true,
+  delete_to_trash = true,
+  columns = { "icon" },
+  view_options = {
+    show_hidden = true,
+  },
+  skip_confirm_for_simple_edits = true,
+})
+
+require('nvim-autopairs').setup()
+
+require('nvim-ts-autotag').setup()
+
+require('blink.cmp').setup({
+  fuzzy = { implementation = 'lua' },
+  signature = {
+    enabled = true,
+    window = {
+      border = "rounded",
+    },
+  },
+  keymap = { preset = 'super-tab' },
+})
+
+--------------------- KEYMAPS -------------------
+
+-- harpoon keymaps
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
@@ -95,39 +158,26 @@ vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end)
 vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end)
 vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end)
 
--- require("nvim-treesitter.install").update("all")
--- require("nvim-treesitter.config").setup({
---   ensure_installed = {
---     "javascript",
---     "typescript",
---   },
---   highlight = {
---     enable = true,
---   },
--- })
 
+-- vsplit
+vim.keymap.set("n", "|", function()
+  vim.cmd("botright vsplit")
+  require("oil").open()
+end, { desc = "Oil right split" })
 
-vim.cmd.colorscheme("gruvbox")
+-- new h split
+vim.keymap.set("n", "_", function()
+  vim.cmd("botright split") -- bottom
+  require("oil").open()
+end, { desc = "Oil bottom split" })
 
-require('oil').setup({
-  view_options = {
-    show_hidden = true, 
-  },
-  skip_confirm_for_simple_edits = true,
-})
-require('nvim-autopairs').setup()
-
-require('nvim-ts-autotag').setup()
-
-require('blink.cmp').setup({
-	fuzzy = { implementation = 'lua' },
-	signature = { enabled = true },
-	keymap = { preset = 'super-tab' },
-})
-
-
--- Oil
+-- oil
 vim.keymap.set('n', '<leader>o', '<cmd>Oil<cr>')
+
+-- oil root
+vim.keymap.set('n', '<leader>O', function()
+  require('oil').open(vim.fn.getcwd())
+end)
 
 -- alternate buffer
 vim.keymap.set('n', '<leader>a', '<C-^>')
@@ -138,22 +188,27 @@ vim.keymap.set('v', 'J', ":<C-u>'<,'>m '>+1<CR>gv=gv")
 -- Move selected block up
 vim.keymap.set('v', 'K', ":<C-u>'<,'>m '<-2<CR>gv=gv")
 
+-- move between panes like tmux
 vim.keymap.set('n', '<C-h>', '<C-w>h')
 vim.keymap.set('n', '<C-j>', '<C-w>j')
 vim.keymap.set('n', '<C-k>', '<C-w>k')
 vim.keymap.set('n', '<C-l>', '<C-w>l')
 
+-- restart nvim
 vim.keymap.set('n', '<leader><C-r>', '<cmd>restart<cr>')
 
 -- remove search highlight
 vim.keymap.set("n", "<C-x>", function() vim.cmd("nohlsearch") end)
 
--- boreder on K
-vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover({border = "rounded"})<cr>', opts)
 
 -- zz remaps
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half page down' })
 vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Half page up' })
+
+
+-- ~/.config/nvim/init.lua (at the top level, not in a filetype plugin)
+
+
 -- telescope -- 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Find files' })
@@ -185,11 +240,48 @@ vim.keymap.set(
 	{ desc = '[S]earch Workspace [W]arnings' }
 )
 
+-- toggle warnings
+local warnings_enabled = true
+
+vim.keymap.set('n', '<leader>tw', function()
+  warnings_enabled = not warnings_enabled
+
+  if warnings_enabled then
+    vim.diagnostic.config {
+      virtual_text = true,
+      underline = true,
+    }
+    print("Warnings enabled")
+  else
+    vim.diagnostic.config {
+      virtual_text = { severity = vim.diagnostic.severity.ERROR },
+      underline = { severity = vim.diagnostic.severity.ERROR },
+    }
+    print("Warnings disabled")
+  end
+end, { noremap = true, silent = false })
+
+vim.keymap.set('n', '<leader>u', '<cmd>Undotree<cr>', {
+  noremap = true,
+  silent = true,
+  desc = 'Toggle Undotree'
+})
+
+
 -- bg transparent
 vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
 vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
 vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
 
+-- Make diagnostic sign backgrounds transparent (keep text color)
+vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = "none", fg = "#FF0000" })
+vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = "none", fg = "#FF9900" })
+vim.api.nvim_set_hl(0, "DiagnosticSignInfo", { bg = "none", fg = "Blue" })
+vim.api.nvim_set_hl(0, "DiagnosticSignHint", { bg = "none", fg = "Cyan" })
+
+-----------------------------------------------------------------------------------------
+---                                  LSP SETUP                                        ---
+-----------------------------------------------------------------------------------------
 
 local lsp_servers = {
 	dockerls = {},
@@ -253,14 +345,6 @@ local lsp_servers = {
 	jdtls = {},
 }
 
-
-vim.pack.add({
-  "https://github.com/neovim/nvim-lspconfig", -- default configs for lsps
-  "https://github.com/mason-org/mason.nvim",                     -- package manager
-  "https://github.com/mason-org/mason-lspconfig.nvim",           -- lspconfig bridge
-  "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" -- auto installer
-})
-
 require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
@@ -273,66 +357,61 @@ require("mason-tool-installer").setup({
 for server, config in pairs(lsp_servers) do
   vim.lsp.config(server, {
     settings = config,
-    -- only create the keymaps if the server attaches successfully
     on_attach = function(_, bufnr)
-	    vim.keymap.set("n", "grd", vim.lsp.buf.definition,
-	    { buffer = bufnr, desc = "vim.lsp.buf.definition()", })
-	    vim.keymap.set("n", "grt", vim.lsp.buf.type_definition,
-	    { buffer = bufnr, desc = "vim.lsp.buf.type_definition()", })
-	    vim.keymap.set("n", "grf", vim.lsp.buf.format,
-	    { buffer = bufnr, desc = "vim.lsp.buf.format()", })
-	    vim.keymap.set("n", "grr", vim.lsp.buf.references,
-	    { buffer = bufnr, desc = "vim.lsp.buf.references()", })
+      vim.keymap.set("n", "grd", vim.lsp.buf.definition,
+        { buffer = bufnr, desc = "vim.lsp.buf.definition()" })
+      vim.keymap.set("n", "grt", vim.lsp.buf.type_definition,
+        { buffer = bufnr, desc = "vim.lsp.buf.type_definition()" })
+      vim.keymap.set("n", "grf", vim.lsp.buf.format,
+        { buffer = bufnr, desc = "vim.lsp.buf.format()" })
+      vim.keymap.set("n", "grr", vim.lsp.buf.references,
+        { buffer = bufnr, desc = "vim.lsp.buf.references()" })
+      
+      -- Additional useful keymaps
+      vim.keymap.set("n", "gri", vim.lsp.buf.implementation,
+        { buffer = bufnr, desc = "vim.lsp.buf.implementation()" })
+      vim.keymap.set("n", "grn", vim.lsp.buf.rename,
+        { buffer = bufnr, desc = "vim.lsp.buf.rename()" })
+      vim.keymap.set("n", "gra", vim.lsp.buf.code_action,
+        { buffer = bufnr, desc = "vim.lsp.buf.code_action()" })
+      
+      -- Diagnostics
+      vim.keymap.set("n", "[d", vim.diagnostic.goto_prev,
+        { buffer = bufnr, desc = "Go to previous diagnostic" })
+      vim.keymap.set("n", "]d", vim.diagnostic.goto_next,
+        { buffer = bufnr, desc = "Go to next diagnostic" })
+      
+      -- Hover with custom border - ADD buffer = bufnr HERE
+      vim.keymap.set("n", "K", function()
+        vim.lsp.buf.hover({
+          border = "rounded",
+          focusable = true,
+          max_width = 80,
+          max_height = 30,
+        })
+      end, { buffer = bufnr, noremap = true, silent = true, desc = "Hover" })
+      
+      -- Signature help with rounded border - ADD buffer = bufnr HERE
+      vim.keymap.set("n", "<C-k>", function()
+        vim.lsp.buf.signature_help({
+          border = "rounded",
+          focusable = true,
+        })
+      end, { buffer = bufnr, noremap = true, silent = true, desc = "Signature help" })
+      
+      -- Diagnostics with rounded border - ADD buffer = bufnr HERE
+      vim.keymap.set("n", "<leader>d", function()
+        vim.diagnostic.open_float({
+          border = "rounded",
+          focusable = true,
+          max_width = 80,
+        })
+      end, { buffer = bufnr, noremap = true, silent = true, desc = "Open diagnostic float" })
     end,
   })
   vim.lsp.enable(server)
 end
 
-
--- toggle warnings
-local warnings_enabled = true
-
-vim.keymap.set('n', '<leader>tw', function()
-  warnings_enabled = not warnings_enabled
-
-  if warnings_enabled then
-    vim.diagnostic.config {
-      virtual_text = true,
-      underline = true,
-    }
-    print("Warnings enabled")
-  else
-    vim.diagnostic.config {
-      virtual_text = { severity = vim.diagnostic.severity.ERROR },
-      underline = { severity = vim.diagnostic.severity.ERROR },
-    }
-    print("Warnings disabled")
-  end
-end, { noremap = true, silent = false })
-
-
-vim.api.nvim_create_autocmd('FileType', {
-    callback = function() pcall(vim.treesitter.start) end,
-})
-
--- Open Oil when nvim is opened with a directory
-vim.api.nvim_create_autocmd('VimEnter', {
-  callback = function()
-    if vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-      require('oil').open(vim.fn.argv(0))
-    end
-  end,
-})
-
-
--- require("statusline")
---
--- vim.opt.statusline = "%#StatuslineMode#%{luaeval('require(\"statusline\").mode()')}%* %f %#StatuslineBranch#%{luaeval('require(\"statusline\").branch()')}%*"
---
--- -- Optional: Add highlighting groups for colors
--- vim.cmd([[
---   highlight StatuslineMode ctermfg=black ctermbg=green
---   highlight StatuslineBranch ctermfg=white ctermbg=blue
--- ]])
-
 -- :TSInstall bash c cpp diff html css javascript typescript tsx lua luadoc markdown vim python json go java yaml dockerfile sql regex query scss xml csv ini toml make helm graphql http rust php
+
+
