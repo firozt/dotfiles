@@ -78,7 +78,7 @@ vim.pack.add {
     'https://github.com/tpope/vim-surround',
     'https://github.com/nvim-mini/mini.ai',
 	{ src = 'https://github.com/theprimeagen/harpoon', branch='harpoon2' },
-	-- LSP + Auto-complete --
+	-- LSP + Auto-complete + Syntax -- 
 	{ src = 'https://github.com/saghen/blink.cmp', branch = 'v1' },
 	'https://github.com/neovim/nvim-lspconfig',
 	'https://github.com/nvim-treesitter/nvim-treesitter',
