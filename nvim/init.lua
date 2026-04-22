@@ -115,7 +115,7 @@ require('conform').setup {
   formatters_by_ft = {
     lua = { 'stylua' },
     python = { 'ruff' },
-    go = { 'gofmt', 'goimports' },
+    go = { 'goimports' },
     java = { 'google-java-format' },
 
     javascript = { 'prettierd' },
@@ -312,10 +312,19 @@ vim.keymap.set('n', '<leader>u', '<cmd>Undotree<cr>', {
   desc = 'Toggle Undotree',
 })
 
+-- format keymap, display lines changed and filetype
 vim.keymap.set('n', 'grf', function()
+  local bufnr = vim.api.nvim_get_current_buf()
   local ft = vim.bo.filetype
+  local before = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   vim.notify('formatting buffer [' .. ft .. ']', vim.log.levels.INFO)
-  require('conform').format { lsp_fallback = true }
+  require('conform').format { lsp_fallback = true, async = false }
+  local after = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  local changed = 0
+  for i = 1, math.max(#before, #after) do
+    if before[i] ~= after[i] then changed = changed + 1 end
+  end
+  vim.notify(string.format('formatted [%s] | changed lines: %d', ft, changed), vim.log.levels.INFO)
 end, { desc = 'Format file' })
 
 -- bg transparent
