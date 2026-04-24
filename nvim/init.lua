@@ -185,7 +185,23 @@ require('blink.cmp').setup {
   keymap = { preset = 'super-tab' },
 }
 
---------------------- KEYMAPS -------------------
+require('telescope').setup {
+  defaults = {
+    layout_strategy = 'horizontal',
+    layout_config = {
+      horizontal = {
+        prompt_position = 'top',
+        preview_width = 0.6,
+        width = { padding = 0 },
+        height = { padding = 0 },
+      },
+    },
+  },
+}
+
+-----------------------------------------------------------------------------------------
+---                                  KEYMAPS                                          ---
+-----------------------------------------------------------------------------------------
 
 
 -- quick fix next / prev with auto zz + toggle
