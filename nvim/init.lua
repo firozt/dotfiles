@@ -187,6 +187,7 @@ require('blink.cmp').setup {
 
 --------------------- KEYMAPS -------------------
 
+
 -- quick fix next / prev with auto zz + toggle
 vim.keymap.set('n', '<leader>q', function()
   local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
@@ -260,6 +261,8 @@ vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Find files' })
 vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Live grep' })
 vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Buffers' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
+
+vim.keymap.set('n', '<leader>gd', builtin.git_commits, { noremap = true })
 
 -- Telescope Workspace Errors
 vim.keymap.set(
