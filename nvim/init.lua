@@ -24,7 +24,6 @@ vim.o.confirm = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
-
 -- persist undo
 local undo_dir = vim.fn.stdpath 'data' .. '/undo'
 
@@ -108,6 +107,10 @@ vim.pack.add {
 -----------------------------------------------------------------------------------------
 
 -- theme
+require('gruvbox').setup {
+  transparent_mode = true,
+}
+-- vim.o.background = "light"
 vim.cmd.colorscheme 'gruvbox'
 
 -- formatters
@@ -187,6 +190,7 @@ require('blink.cmp').setup {
 
 require('telescope').setup {
   defaults = {
+    sorting_strategy = 'ascending',
     layout_strategy = 'horizontal',
     layout_config = {
       horizontal = {
@@ -203,7 +207,6 @@ require('telescope').setup {
 ---                                  KEYMAPS                                          ---
 -----------------------------------------------------------------------------------------
 
-
 -- quick fix next / prev with auto zz + toggle
 vim.keymap.set('n', '<leader>q', function()
   local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
@@ -212,21 +215,21 @@ vim.keymap.set('n', '<leader>q', function()
   else
     vim.cmd 'copen'
   end
-end, { noremap = true })
-vim.keymap.set('n', ']q', '<cmd>cnext<CR>zz', { noremap = true })
-vim.keymap.set('n', '[q', '<cmd>cprev<CR>zz', { noremap = true })
+end, { noremap = true, desc = 'Toggle [q]uick fix list' })
+vim.keymap.set('n', ']q', '<cmd>cnext<CR>zz', { noremap = true, desc = 'Next [q]uick fix list item' })
+vim.keymap.set('n', '[q', '<cmd>cprev<CR>zz', { noremap = true, desc = 'Prev [q]uick fix list item' })
 
 -- harpoon keymaps
 local mark = require 'harpoon.mark'
 local ui = require 'harpoon.ui'
 
-vim.keymap.set('n', '<leader>fa', mark.add_file)
-vim.keymap.set('n', '<C-e>', ui.toggle_quick_menu)
+vim.keymap.set('n', '<leader>fa', mark.add_file, { desc = 'Harpoon [a]dd' })
+vim.keymap.set('n', '<C-e>', ui.toggle_quick_menu, { desc = 'Harpoon m[e]nu' })
 
-vim.keymap.set('n', '<leader>1', function() ui.nav_file(1) end)
-vim.keymap.set('n', '<leader>2', function() ui.nav_file(2) end)
-vim.keymap.set('n', '<leader>3', function() ui.nav_file(3) end)
-vim.keymap.set('n', '<leader>4', function() ui.nav_file(4) end)
+vim.keymap.set('n', '<leader>1', function() ui.nav_file(1) end, { desc = 'Harpoon buffer [1]' })
+vim.keymap.set('n', '<leader>2', function() ui.nav_file(2) end, { desc = 'Harpoon buffer [2]' })
+vim.keymap.set('n', '<leader>3', function() ui.nav_file(3) end, { desc = 'Harpoon buffer [3]' })
+vim.keymap.set('n', '<leader>4', function() ui.nav_file(4) end, { desc = 'Harpoon buffer [4]' })
 
 -- vsplit
 vim.keymap.set('n', '|', function()
@@ -241,31 +244,31 @@ vim.keymap.set('n', '-', function()
 end, { desc = 'Oil bottom split' })
 
 -- oil
-vim.keymap.set('n', '<leader>o', '<cmd>Oil<cr>')
+vim.keymap.set('n', '<leader>o', '<cmd>Oil<cr>', { desc = '[O]il file browser (cwd)' })
 
 -- oil root
-vim.keymap.set('n', '<leader>O', function() require('oil').open(vim.fn.getcwd()) end)
+vim.keymap.set('n', '<leader>O', function() require('oil').open(vim.fn.getcwd()) end, { desc = '[O]il file browser (root dir)' })
 
 -- alternate buffer
-vim.keymap.set('n', '<leader>a', '<C-^>')
+vim.keymap.set('n', '<leader>a', '<C-^>', { desc = '[a]lternate buffer' })
 
 -- Move selected block down
-vim.keymap.set('v', 'J', ":<C-u>'<,'>m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'J', ":<C-u>'<,'>m '>+1<CR>gv=gv", { desc = 'Move selected lines down' })
 
 -- Move selected block up
-vim.keymap.set('v', 'K', ":<C-u>'<,'>m '<-2<CR>gv=gv")
+vim.keymap.set('v', 'K', ":<C-u>'<,'>m '<-2<CR>gv=gv", { desc = 'Move selected lines up' })
 
 -- move between panes like tmux
-vim.keymap.set('n', '<C-h>', '<C-w>h')
-vim.keymap.set('n', '<C-j>', '<C-w>j')
-vim.keymap.set('n', '<C-k>', '<C-w>k')
-vim.keymap.set('n', '<C-l>', '<C-w>l')
+vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Move pane left' })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move pane down' })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move pane up' })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move pane right' })
 
 -- restart nvim
-vim.keymap.set('n', '<leader><C-r>', '<cmd>restart<cr>')
+vim.keymap.set('n', '<leader><C-r>', '<cmd>restart<cr>', { desc = '[R]estart nvim' })
 
 -- remove search highlight
-vim.keymap.set('n', '<C-x>', function() vim.cmd 'nohlsearch' end)
+vim.keymap.set('n', '<C-x>', '<cmd>nohlsearch<CR>', { desc = 'Remove highlighted search' })
 
 -- zz remaps
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half page down' })
@@ -278,7 +281,10 @@ vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Live grep' })
 vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Buffers' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
 
-vim.keymap.set('n', '<leader>gd', builtin.git_commits, { noremap = true })
+vim.keymap.set('n', '<leader>gd', builtin.git_commits, { noremap = true, desc = 'Git buffer commit histroy' })
+vim.keymap.set('n', '<leader>gD', builtin.git_commits, { noremap = true, desc = 'Git commit history' })
+vim.keymap.set('n', '<leader>gb', builtin.git_branches, { noremap = true, desc = 'Git branches' })
+vim.keymap.set('n', '<leader>gs', builtin.git_status, { noremap = true, desc = 'Git status' })
 
 -- Telescope Workspace Errors
 vim.keymap.set(
@@ -289,7 +295,7 @@ vim.keymap.set(
       severity = vim.diagnostic.severity.ERROR,
     }
   end,
-  { desc = '[S]how Workspace [E]rrors' }
+  { desc = '[s]how Workspace [e]rrors' }
 )
 
 -- Workspace Warnings
@@ -301,7 +307,7 @@ vim.keymap.set(
       severity = vim.diagnostic.severity.WARN,
     }
   end,
-  { desc = '[S]earch Workspace [W]arnings' }
+  { desc = '[s]earch Workspace [w]arnings' }
 )
 
 -- toggle warnings
@@ -323,7 +329,7 @@ vim.keymap.set('n', '<leader>tw', function()
     }
     print 'Warnings disabled'
   end
-end, { noremap = true, silent = false })
+end, { noremap = true, silent = false, desc = '[t]oggle [w]arnings' })
 
 vim.keymap.set('n', '<leader>u', '<cmd>Undotree<cr>', {
   noremap = true,
@@ -344,18 +350,7 @@ vim.keymap.set('n', 'grf', function()
     if before[i] ~= after[i] then changed = changed + 1 end
   end
   vim.notify(string.format('formatted [%s] | changed lines: %d', ft, changed), vim.log.levels.INFO)
-end, { desc = 'Format file' })
-
--- bg transparent
-vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
-
--- Make diagnostic sign backgrounds transparent (keep text color)
-vim.api.nvim_set_hl(0, 'DiagnosticSignError', { bg = 'none', fg = '#FF0000' })
-vim.api.nvim_set_hl(0, 'DiagnosticSignWarn', { bg = 'none', fg = '#FF9900' })
-vim.api.nvim_set_hl(0, 'DiagnosticSignInfo', { bg = 'none', fg = 'Blue' })
-vim.api.nvim_set_hl(0, 'DiagnosticSignHint', { bg = 'none', fg = 'Cyan' })
+end, { desc = '[f]ormat file' })
 
 -----------------------------------------------------------------------------------------
 ---                                  LSP SETUP                                        ---
