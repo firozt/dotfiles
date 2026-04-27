@@ -52,6 +52,10 @@
       "rev": "e2cb22089cc2358b2b995c09578224f142de6039",
       "src": "https://github.com/brenoprata10/nvim-highlight-colors"
     },
+    "nvim-jdtls": {
+      "rev": "77ccaeb422f8c81b647605da5ddb4a7f725cda90",
+      "src": "https://codeberg.org/mfussenegger/nvim-jdtls.git"
+    },
     "nvim-lspconfig": {
       "rev": "8a9378a822719346a0288fa004dab302ca3c0a8f",
       "src": "https://github.com/neovim/nvim-lspconfig"
