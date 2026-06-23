@@ -50,7 +50,7 @@ vim.diagnostic.config {
 }
 
 -- remove default syntax highlight, only use treestierr
-vim.cmd 'syntax off'
+-- vim.cmd 'syntax off'
 
 -----------------------------------------------------------------------------------------
 ---                                 AUTO CMD'S                                        ---
@@ -100,7 +100,7 @@ vim.pack.add {
   'https://github.com/mason-org/mason.nvim',
   'https://github.com/mason-org/mason-lspconfig.nvim',
   'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim',
-  'https://codeberg.org/mfussenegger/nvim-jdtls.git',
+  'https://codeberg.org/mfussenegger/nvim-jdtls.git', -- java lsp, pain to setup so use this instead
 }
 
 -----------------------------------------------------------------------------------------
@@ -189,6 +189,7 @@ require('telescope').setup {
   defaults = {
     sorting_strategy = 'ascending',
     layout_strategy = 'horizontal',
+    path_display = { 'truncate' },
     layout_config = {
       horizontal = {
         prompt_position = 'top',
@@ -197,9 +198,15 @@ require('telescope').setup {
         height = { padding = 0 },
       },
     },
+    mappings = {
+      i = {
+        ['<C-c>'] = require('telescope.actions').close,  -- remove this if you want <C-c> to do nothing
+        -- OR to mirror <Esc> behavior (enter normal mode):
+        ['<C-c>'] = { '<Esc>', type = 'command' },
+      },
+    },
   },
 }
-
 -----------------------------------------------------------------------------------------
 ---                                  KEYMAPS                                          ---
 -----------------------------------------------------------------------------------------
@@ -356,11 +363,29 @@ end, { desc = '[f]ormat file' })
 local lsp_servers = {
   lua_ls = {},
   dockerls = {},
-  html = {},
+  html = {
+    settings = {
+      html = {
+        validate = true,
+        format = {
+          enable = true,
+          wrapLineLength = 120,
+          indentInnerHtml = false,
+        },
+        -- More strict validation
+        hover = {
+          documentation = true,
+          references = true,
+        },
+      },
+    },
+  },
   cssls = {},
   jsonls = {},
   clangd = {},
-  jdtls = {},
+  jdtls = {
+    skip_setup = true,
+  },
   gopls = {
     settings = {
       gopls = {
@@ -368,7 +393,7 @@ local lsp_servers = {
           unusedparams = true,
           shadow = true,
           fieldalignment = true,
-          nilness = true,
+          nilnss = true,
           unusedwrite = true,
           useany = true,
         },
