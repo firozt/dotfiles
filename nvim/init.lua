@@ -200,7 +200,7 @@ require('telescope').setup {
     },
     mappings = {
       i = {
-        ['<C-c>'] = require('telescope.actions').close,  -- remove this if you want <C-c> to do nothing
+        ['<C-c>'] = require('telescope.actions').close, -- remove this if you want <C-c> to do nothing
         -- OR to mirror <Esc> behavior (enter normal mode):
         ['<C-c>'] = { '<Esc>', type = 'command' },
       },
@@ -268,8 +268,11 @@ vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move pane down' })
 vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move pane up' })
 vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move pane right' })
 
--- restart nvim
-vim.keymap.set('n', '<leader><C-r>', '<cmd>restart<cr>', { desc = '[R]estart nvim' })
+-- restart nvim + lsps (used when hogging alot of memory)
+vim.keymap.set('n', '<leader><C-r>', function()
+  vim.lsp.stop_client(vim.lsp.get_clients(), true)
+  vim.cmd 'restart'
+end, { desc = '[R]estart nvim' })
 
 -- remove search highlight
 vim.keymap.set('n', '<C-x>', '<cmd>nohlsearch<CR>', { desc = 'Remove highlighted search' })
@@ -434,8 +437,14 @@ for server, config in pairs(lsp_servers) do
   vim.lsp.config(server, {
     settings = config,
     on_attach = function(_, bufnr)
-      vim.keymap.set('n', 'grd', vim.lsp.buf.definition, { buffer = bufnr, desc = 'vim.lsp.buf.definition()' })
-      vim.keymap.set('n', 'grt', vim.lsp.buf.type_definition, { buffer = bufnr, desc = 'vim.lsp.buf.type_definition()' })
+      vim.keymap.set('n', 'grd', function()
+        vim.lsp.buf.definition()
+        vim.cmd 'normal! zz'
+      end, { buffer = bufnr, desc = 'vim.lsp.buf.definition()' })
+      vim.keymap.set('n', 'grt', function()
+        vim.lsp.buf.type_definition()
+        vim.cmd 'normal! zz'
+      end, { buffer = bufnr, desc = 'vim.lsp.buf.type_definition()' })
       -- using formatter instead
       -- vim.keymap.set('n', 'grf', vim.lsp.buf.format, { buffer = bufnr, desc = 'vim.lsp.buf.format()' })
       vim.keymap.set('n', 'grr', vim.lsp.buf.references, { buffer = bufnr, desc = 'vim.lsp.buf.references()' })
