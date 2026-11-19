@@ -3,6 +3,8 @@
 theme = gruvbox-material-soft-dark
 # theme = gruvbox-material-soft-light
 
+# theme = gruvbox-material-soft-light
+
 config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
 
 window-decoration = none
@@ -20,9 +22,10 @@ window-padding-y = 6
 confirm-close-surface=false
 resize-overlay = never
 gtk-toolbar-style = flat
-background-opacity = 0.95
+background-opacity = .95
+
 background-blur = true
-background-blur-radius = 5
+background-blur-radius = 10
 
 # Cursor styling
 cursor-style = block

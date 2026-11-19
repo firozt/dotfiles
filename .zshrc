@@ -127,6 +127,7 @@ unset __conda_setup
 alias clampshell="zsh /Users/roooge/scripts/clampshell.sh"
 alias s="zsh /Users/roooge/scripts/search.sh"
 alias lpm="zsh /Users/roooge/scripts/lowpowermode.sh"
+alias upload-komga="/Users/roooge/scripts/upload-book.sh "
 
 export DEV=$HOME/Developer
 
@@ -146,6 +147,8 @@ export PATH="$PATH:$COOL_HOME/bin/.orig/.darwin"
 export UNI="/Users/roooge/Desktop/school/third-year"
 
 export PATH="$COOL_HOME/bin:$PATH"
+
+export PATH="$PATH:/Users/roooge/go/bin"
 
 # fuzzy find directories
 
